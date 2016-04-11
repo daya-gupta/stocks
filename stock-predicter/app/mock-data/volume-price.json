@@ -1,0 +1,58 @@
+[
+{
+	'price': 100,
+	'volume': 1000
+	},
+	{
+	'price': 101,
+	'volume': 1100
+	},
+	{
+	'price': 101.5,
+	'volume': 900
+	},
+	{
+	'price': 110,
+	'volume': 1000
+	},
+	{
+	'price': 105,
+	'volume': 1500
+	},
+	{
+	'price': 99,
+	'volume': 1000
+	},
+	{
+	'price': 104,
+	'volume': 1090
+	},
+	{
+	'price': 100,
+	'volume': 1000
+	},
+	{
+	'price': 101,
+	'volume': 1100
+	},
+	{
+	'price': 101.5,
+	'volume': 900
+	},
+	{
+	'price': 110,
+	'volume': 1000
+	},
+	{
+	'price': 105,
+	'volume': 1500
+	},
+	{
+	'price': 99,
+	'volume': 1000
+	},
+	{
+	'price': 104,
+	'volume': 1090
+	}
+	]
