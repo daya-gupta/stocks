@@ -1,0 +1,230 @@
+[{
+    "symbol": "JETAIRWAYS", "profile": [
+		{
+			"quarter": "Q1",
+            "date": "11-Aug-2014",
+            "profit": -217.65,
+            "revenue": 4685.6
+        }, {
+            "quarter": "Q2",
+            "date": "07-Nov-2014",
+            "profit": 69.8,
+            "revenue": 4772.2
+        }, {
+            "quarter": "Q3",
+            "date": "06-Feb-2015",
+            "profit": 63.11,
+            "revenue": 5051.0
+        }, {
+            "quarter": "Q4",
+            "date": "29-May-2015",
+            "profit": -1728.9,
+            "revenue": 5064.5
+        },{
+            "quarter": "Q1",
+            "date": "14-Aug-2015",
+            "profit": 221.7,
+            "revenue": 5220.1
+        },{
+            "quarter": "Q2",
+            "date": "28-Oct-2015",
+            "profit": 87.5,
+            "revenue": 5257.9
+        },{
+            "quarter": "Q3",
+            "date": "05-Feb-2016",
+            "profit": 467.1,
+            "revenue": 5443.9
+        }]
+    },  {"symbol": "RAJESHEXPO", "profile": [{
+            "quarter": "Q1",
+            "date": "20-Aug-2014",
+            "profit": 72.0,
+            "revenue": 6699.7
+        }, {
+            "quarter": "Q2",
+            "date": "13-Nov-2014",
+            "profit": 110.9,
+            "revenue": 9155.9
+        }, {
+            "quarter": "Q3",
+            "date": "13-Feb-2015",
+            "profit": 78.0,
+            "revenue": 9642.3
+        }, {
+            "quarter": "Q4",
+            "date": "28-May-2015",
+            "profit": 2.9,
+            "revenue": 12421.3
+        },{
+            "quarter": "Q1",
+            "date": "04-Sep-2015",
+            "profit": 121.5,
+            "revenue": 8452.5
+        },{
+            "quarter": "Q2",
+            "date": "16-Nov-2015",
+            "profit": 138.7,
+            "revenue": 10709.5
+        },{
+            "quarter": "Q3",
+            "date": "11-Feb-2016",
+            "profit": 139.7,
+            "revenue": 9049.9
+        }]
+    }, {"symbol": "KITEX", "profile": [{
+            "quarter": "Q1",
+            "date": "15-Jul-2014",
+            "profit": 14.4,
+            "revenue": 102.7
+        }, {
+            "quarter": "Q2",
+            "date": "16-Oct-2014",
+            "profit": 19.3,
+            "revenue": 128.2
+        }, {
+            "quarter": "Q3",
+            "date": "12-Jan-2015",
+            "profit": 23.1,
+            "revenue": 122.1
+        }, {
+            "quarter": "Q4",
+            "date": "06-Apr-2015",
+            "profit": 41.6,
+            "revenue": 158.0
+        }, {
+            "quarter": "Q1",
+            "date": "20-Jul-2015",
+            "profit": 15.9,
+            "revenue": 109.0
+        },{
+            "quarter": "Q2",
+            "date": "19-Oct-2015",
+            "profit": 27.1,
+            "revenue": 134.2
+        },{
+            "quarter": "Q3",
+            "date": "25-Jan-2016",
+            "profit": 24.0,
+            "revenue": 118.1
+        },{
+            "quarter": "Q4",
+            "date": "04-Apr-2016",
+            "profit": 44.9,
+            "revenue": 184.3
+        }
+    ]},
+
+
+    {"symbol": "AMARAJABAT", "profile": [{
+                "quarter": "Q1",
+                "date": "06-Aug-2014",
+                "profit": 105.96,
+                "revenue": 1029.03
+            }, {
+                "quarter": "Q2",
+                "date": "11-Nov-2014",
+                "profit": 100.30,
+                "revenue": 1060.23
+            }, {
+                "quarter": "Q3",
+                "date": "27-Jan-2015",
+                "profit": 102.34,
+                "revenue": 1059.55
+            }, {
+                "quarter": "Q4",
+                "date": "29-May-2015",
+                "profit": 102.26,
+                "revenue": 1069.84
+            }, {
+                "quarter": "Q1",
+                "date": "14-Aug-2015",
+                "profit": 122.09,
+                "revenue": 1137.59
+            },{
+                "quarter": "Q2",
+                "date": "28-Oct-2015",
+                "profit": 122.57,
+                "revenue": 1158.29
+            },{
+                "quarter": "Q3",
+                "date": "02-Feb-2016",
+                "profit": 136.18,
+                "revenue": 1225.14
+            }
+        ]},
+        {"symbol": "CAPLIPOINT", "profile": [{
+                    "quarter": "Q1",
+                    "date": "25-Aug-2014",
+                    "profit": 6.93,
+                    "revenue": 45.93
+                }, {
+                    "quarter": "Q2",
+                    "date": "12-Nov-2014",
+                    "profit": 8.53,
+                    "revenue": 54.38
+                }, {
+                    "quarter": "Q3",
+                    "date": "04-Feb-2015",
+                    "profit": 9.11,
+                    "revenue": 57.46
+                }, {
+                    "quarter": "Q4",
+                    "date": "12-May-2015",
+                    "profit": 10.60,
+                    "revenue": 60.92
+                }, {
+                    "quarter": "Q1",
+                    "date": "20-Aug-2015",
+                    "profit": 12.70,
+                    "revenue": 67.55
+                },{
+                    "quarter": "Q2",
+                    "date": "05-Nov-2015",
+                    "profit": 14.20,
+                    "revenue": 75.49
+                },{
+                    "quarter": "Q3",
+                    "date": "05-Feb-2016",
+                    "profit": 15.98,
+                    "revenue": 77.16
+                }
+            ]},
+            {"symbol": "AXISBANK", "profile": [{
+                    "quarter": "Q1",
+                    "date": "22-Jul-2014",
+                    "profit": 1666.76,
+                    "revenue": 8289.42
+                }, {
+                    "quarter": "Q2",
+                    "date": "17-Oct-2014",
+                    "profit": 1610.71,
+                    "revenue": 8602.36
+                }, {
+                    "quarter": "Q3",
+                    "date": "16-Jan-2015",
+                    "profit": 1899.76,
+                    "revenue": 8889.74
+                }, {
+                    "quarter": "Q4",
+                    "date": "29-Apr-2015",
+                    "profit": 2180.59,
+                    "revenue": 9697.08
+                }, {
+                    "quarter": "Q1",
+                    "date": "24-Jul-2015",
+                    "profit": 1978.44,
+                    "revenue": 9936.14
+                },{
+                    "quarter": "Q2",
+                    "date": "27-Oct-2015",
+                    "profit": 1915.64,
+                    "revenue": 9959.61
+                },{
+                    "quarter": "Q3",
+                    "date": "20-Jan-2016",
+                    "profit": 2175.30,
+                    "revenue": 10193.33
+                }
+            ]}
+];
