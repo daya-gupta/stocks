@@ -1,0 +1,53 @@
+<p>This is edit page.</p>
+
+<div class="">
+	
+	<table class="table">
+		<tr>
+			<th>Quarter</th>
+			<th>Date</th>
+			<th>Revenue</th>
+			<th>Profit</th>
+		</tr>
+		<tr ng-repeat="item in stockProfile">
+			<td class="col-sm-3" >
+				<!-- dropdown for quater selection -->
+				<select class="form-control" ng-model="item.quarter">
+					<option value="-1">--Quarter--</option>
+					<option value="Q1">Q1</option>
+					<option value="Q2">Q2</option>
+					<option value="Q3">Q3</option>
+					<option value="Q4">Q4</option>
+				</select>
+			</td>
+			<td class="col-sm-3">
+				<!-- datepicker for result declaration date selection -->
+				<div class="input-group">
+		          <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="item.date" is-open="item.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+		          <span class="input-group-btn">
+		            <button type="button" class="btn btn-default" ng-click="item.opened = !item.opened"><i class="glyphicon glyphicon-calendar"></i></button>
+		          </span>
+		        </div>
+			</td>
+			<td class="col-sm-2">
+				<input class="form-control" type="text" ng-model="item.revenue">
+			</td>
+			<td class="col-sm-2">
+				<input class="form-control" type="text" ng-model="item.profit">
+			</td>
+			<td class="col-sm-1">
+				<input class="btn btn-primary" type="button" value="Add Row (+)" ng-click="alterRecord('add', $index)">
+			</td>
+			<td class="col-sm-1">
+				<input class="btn btn-primary" type="button" value="Remove Row (-)" ng-click="alterRecord('remove', $index)">
+			</td>
+		</tr>
+	</table>
+
+	<input class="btn btn-primary" ng-hide="stockProfile.length" type="button" value="Add Row (+)" ng-click="alterRecord('add', 0)">
+	<input class="btn" type="button" value="Cancel" ng-click="saveRecord('cancel')">
+	<input class="btn btn-primary" type="button" value="Save Changes" ng-click="saveRecord('save')">
+</div>
+<!-- savedStockProfile: {{savedStockProfile}} -->
+<br><br>
+<!-- stockProfile: {{stockProfile}} -->

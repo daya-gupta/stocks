@@ -1,0 +1,9 @@
+/stock-predicter/node_modules/*
+/stock-predicter/dist/*
+/stock-predicter/.tmp/*
+/stock-predicter/.sass-cache/*
+/stock-predicter/app/bower_components/*
+/stock-predicter/node_project/node_modules/*
+/data/*
+/node_project/*
+/stock-predicter/app/bower_components

@@ -1,0 +1,60 @@
+<div id="container">
+	<input type="button" value="Search" class="btn" ng-class="{'btn-primary': search.selectedState}" style="float:right; margin-left: 5px;" ng-click="showStockDetails()">
+	<div style="float: right">
+		<input type="text" ng-change="updateSearch()" ng-model="search.selectedState" placeholder="search stock" uib-typeahead="state.name for state in search.states | filter:$viewValue | limitTo:5" typeahead-on-select="onTypeaheadSelection()" class="form-control">
+	</div>
+	<input type="button" value="Add to Watchlist" class="btn" ng-class="" style="float:right; margin-left: 5px;" ng-click="addToWatchlist()">
+	<h1>
+		<span style="font-size: 18px;">{{stock.name}} ({{stock.symbol}})</span>
+		<a ng-click="openNewsPopup()">News</a>
+	</h1>
+	<div class="duration-container">
+		<div class="btn-group">
+	        <label class="btn btn-primary" ng-model="duration.radioModel" ng-change="durationChanged()" uib-btn-radio=1>1 Day</label>
+	        <label class="btn btn-primary" ng-model="duration.radioModel" ng-change="durationChanged()" uib-btn-radio=7>1 Week</label>
+	        <label class="btn btn-primary" ng-model="duration.radioModel" ng-change="durationChanged()" uib-btn-radio=15>2 Week</label>
+	        <label class="btn btn-primary" ng-model="duration.radioModel" ng-change="durationChanged()" uib-btn-radio=30>1 Month</label>
+	        <label class="btn btn-primary" ng-model="duration.radioModel" ng-change="durationChanged()" uib-btn-radio=90>3 Month</label>
+	        <label class="btn btn-primary" ng-model="duration.radioModel" ng-change="durationChanged()" uib-btn-radio=180>6 Month</label>
+	        <label class="btn btn-primary" ng-model="duration.radioModel" ng-change="durationChanged()" uib-btn-radio=365>1 Year</label>
+	        <label class="btn btn-primary" ng-model="duration.radioModel" ng-change="durationChanged()" uib-btn-radio=1095>3 Year</label>
+	        <label class="btn btn-primary" ng-model="duration.radioModel" ng-change="durationChanged()" uib-btn-radio=1825>5 Year</label>
+	    </div>
+	</div>
+	<div id="chart-container">
+	  <span ng-show="!chartData.days.length">No Data Available</span>
+   	</div>
+	
+	<div ng-show="latestPriceVolumeData">
+		<ul>
+			<li>Price: {{latestPriceVolumeData.price}} (
+				<span class="bold" ng-class="{positivePriceChange: latestPriceVolumeData.relativePrice > 0, negativePriceChange: latestPriceVolumeData.relativePrice < 0}">
+					{{latestPriceVolumeData.relativePrice}}%
+				</span>)
+			</li>
+			<li>Volume: {{latestPriceVolumeData.volume}} (
+				<span class="bold" ng-class="{positivePriceChange: latestPriceVolumeData.relativeVolume > 1, negativePriceChange: latestPriceVolumeData.relativeVolume < 1}">
+					{{latestPriceVolumeData.relativeVolume}} times
+				</span>)
+			</li>
+			<li>Average Volume: {{latestPriceVolumeData.averageVolume}}</li>
+		</ul>
+	</div>
+
+	<!-- <div id="tabular-data">
+	   No Data Available
+	   <table class="table table-striped table-bordered"></table>
+	</div> -->
+
+	<div class="row notes" ng-init="showNotes=false">
+	  <div class="col-sm-10">
+		  <textarea class="textarea" ng-show="showNotes" ng-model="stock.note" placeholder='Add notes' rows='6'>notes</textarea>
+	  </div>
+	  <div class="col-sm-2 row">
+	  	<input class="btn btn-primary col-sm-12" ng-show="!showNotes" ng-click="showNote()" type="button" value="Show Notes">
+	  	<input class="btn btn-primary col-sm-12" ng-show="showNotes" ng-click="showNotes=false" type="button" value="Hide Notes">
+	  	<input class="btn btn-primary col-sm-12" ng-show="showNotes" ng-click="saveNote()" type="button" value="Save">
+	  	<input class="btn btn-primary col-sm-12" ng-show="showNotes" ng-click="showNotes=false" type="button" value="Cancel">	
+	  </div>
+	</div>
+</div>
