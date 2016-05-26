@@ -10,6 +10,11 @@ body {
 }
 
 /* Everything but the jumbotron gets side spacing for mobile first views */
+
+.view-container {
+  margin-top: 76px;
+}
+
 .header,
 .marketing,
 .footer {
@@ -82,15 +87,16 @@ body {
   }
 }
 
-.message-container{
+/*.message-container{
   position: relative;
   text-align: center;
-}
+}*/
 .message-container .message {
-  position: absolute;
-  top: -26px;
-  width: 100%;
   color: #000;
+  padding: 4px 0;
+  text-align: center;
+  min-height: 28px;
+  background: white;
 }
 .message-container .message.error {
   color: red;
@@ -163,6 +169,7 @@ table.watchlist {
 }
 
 
+
 /*-----------------------------miscellaneous--------------------------------------*/
 
 *[ng-click] {
@@ -171,4 +178,19 @@ table.watchlist {
 
 .bold{
   font-weight: bold;
+}
+
+
+
+/*-------------------------------------override------------------------------------------------*/
+
+.header {
+  position: fixed;
+  width: 100%;
+  z-index: 9;
+  margin-bottom: 0px !important;
+  background-color: #fff;
+}
+.navbar {
+  margin-bottom: 0;
 }

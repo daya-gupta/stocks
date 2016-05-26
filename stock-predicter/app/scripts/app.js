@@ -25,11 +25,11 @@ angular
         controller: 'MainCtrl',
         controllerAs: 'main'
       })
-      .when('/editStock', {
-        templateUrl: 'views/edit.html',
-        controller: 'EditCtrl',
-        controllerAs: 'edit'
-      })
+      // .when('/editStock', {
+      //   templateUrl: 'views/edit.html',
+      //   controller: 'EditCtrl',
+      //   controllerAs: 'edit'
+      // })
       .when('/watchlist', {
         templateUrl: 'views/watchlist.html',
         controller: 'WatchlistCtrl',

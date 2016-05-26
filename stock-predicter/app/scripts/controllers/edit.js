@@ -1,192 +1,34 @@
 'use strict';
 
-/**
- * @ngdoc function
- * @name stockApp.controller:AboutCtrl
- * @description
- * # AboutCtrl
- * Controller of the stockApp
- */
-angular.module('stockApp')
-  .controller('EditCtrl', function ($scope, $http, $location) {
-    
-    if($scope.$root.stock) {
-    	$scope.stock = {
-    	    name: $scope.$root.stock.name,
-    	    symbol: $scope.$root.stock.symbol
-    	};
-    } else {
-    	// redirect to home page
-    	$location.path('/');
-    }
-
-    $scope.savedStockProfile = [];
-    
-    // get data for selected stock 
-    $http({
-        method: 'get',
-        url: 'http://localhost:4000/getStockProfile?symbol='+$scope.stock.symbol
-    }).then(function(response) {
-    	$scope.savedStockProfile = [];
-    	if(response.data && response.data && response.data.length) {
-        	$scope.savedStockProfile = response.data[0].profile;
-	    	_.each($scope.savedStockProfile, function(obj) {
-	    		if(obj.date) {
-		    		obj.date = new Date(Date.parse(obj.date));
-	    		}
-	    	});
-    	}
-    	$scope.stockProfile = angular.copy($scope.savedStockProfile);
-    });
-
-    $scope.alterRecord = function(mode, index) {
-    	if(mode==='add') {
-    		var sampleData = {
-	            quarter: '-1',
-	            date: new Date(),
-	            profit: 0,
-	            revenue: 0
-	        };
-    		$scope.stockProfile.splice(index, 0, sampleData);
-    	} else {
-    		$scope.stockProfile.splice(index, 1);
-    	}
-    };
-
-    $scope.saveRecord = function(mode) {
-    	if(mode === 'save') {
-    		// trigger API for save
-    		var data = angular.copy($scope.stockProfile);
-    		_.each(data, function(obj) {
-    			var temp = String(obj.date).split(' ');
-    			if(temp && temp.length) {
-		    		obj.date = [temp[2],temp[1],temp[3]].join('-');
-    			}
-	    	});
-	    	$http({
-                method: 'post',
-                url: 'http://localhost:4000/saveStockProfile',
-                data: { symbol: $scope.stock.symbol, profile: data}
-            }).then(function(response) {
-            	if(response && response.data && response.data.saved) {
-            		$scope.message.messageString = 'Data saved!!';
-            		$scope.message.messageStatus = true;
-            	}
-            }, function(error) {
-            	console.log(error);
-            	$scope.stockProfile = $scope.savedStockProfile;
-            	$scope.message.messageString = 'An error occured. View updated to previouly saved data status !!';
-            	$scope.message.messageStatus = false;
-            });
-    	} else {
-    		// revert changes to previous state
-    		$scope.stockProfile = $scope.savedStockProfile;
-    	}
-    };
-
-      $scope.inlineOptions = {
-        customClass: getDayClass,
-        minDate: new Date(),
-        showWeeks: true
-      };
-
-      $scope.dateOptions = {
-        dateDisabled: disabled,
-        formatYear: 'yy',
-        maxDate: new Date(2020, 5, 22),
-        minDate: new Date(),
-        startingDay: 1
-      };
-
-      // Disable weekend selection
-      function disabled(data) {
-        var date = data.date,
-          mode = data.mode;
-        return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
-      }
-
-      $scope.toggleMin = function() {
-        $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
-        $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
-      };
-
-      $scope.toggleMin();
-
-      $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate', 'dd-MMM-yyyy'];
-      $scope.format = $scope.formats[4];
-      $scope.altInputFormats = ['M!/d!/yyyy', 'dd-MMM-yyyy'];
-
-      $scope.popup1 = {
-        opened: false
-      };
-
-      function getDayClass(data) {
-          var date = data.date,
-            mode = data.mode;
-          if (mode === 'day') {
-            var dayToCheck = new Date(date).setHours(0,0,0,0);
-
-            for (var i = 0; i < $scope.events.length; i++) {
-              var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
-
-              if (dayToCheck === currentDay) {
-                return $scope.events[i].status;
-              }
-            }
-          }
-          return '';
-        }
-
-  });
-
-
-
-
-
-
-
-// --------------------------------------watchlist---------------------------------------------
-
 angular.module('stockApp')
   .controller('WatchlistCtrl', function ($scope, $http, $timeout, $location, CommonFactory) {
     
     var chartDataCollection = [];
     
-    $scope.edit = null;
-    	
-    $scope.watchlist2 = [];
-
+    $scope.$root.view = 'watchlist';
+    
     $scope.search = {
-        states : [],
-        selectedState: null
+        stock : [],
+        selectedStock: null
     };
 
-    $scope.message = {
-        messageString: null,
-        messageStatus: false
-    }
+    $scope.editPageData = {
+		predicate: 'priority',
+		reverse: false,
+		currentStock: null,
+		watchlist2: [],
+		watchlistCopy: null
+	};
 
-    $scope.currentStock = null;
-
-    $scope.predicate = 'priority';
-	$scope.reverse = false;
-
-	function toggleMessageVisibility(message, status) {
-	    $scope.message.messageString = message;
-	    $scope.message.messageStatus = status;
-	    $timeout(function() {
-	        $scope.message.messageString = null;
-	    }, 4000);
-	}
-
-	function computeVolumeCriteria(chartData) {
+	function computeVolumeCriteria(chartData, flag) {
+		var startIndex = flag === 'new' ? 10 : 12 ;
+		var endIndex = flag === 'new' ? 0 : 2;
 		var volumeCriteria = 0;
-		// var relevantVolumeData = chartData.volume.reverse().slice(0,10);
-		var relevantVolumeData = angular.copy(chartData.volume).reverse().slice(0,10);
-		var relevantPriceData = angular.copy(chartData.price).reverse().slice(0,10);
+		var relevantVolumeData = angular.copy(chartData.volume).slice(chartData.volume.length-startIndex, chartData.volume.length - endIndex);
+		var relevantPriceData = angular.copy(chartData.price).slice(chartData.price.length-startIndex, chartData.price.length - endIndex);
 		_.each(relevantVolumeData, function(obj, index) {
-			if(index) {
-				volumeCriteria+= Number(relevantPriceData[index-1]) >= Number(relevantPriceData[index]) ? relevantVolumeData[index-1] : - relevantVolumeData[index-1];
+			if(index && relevantVolumeData[index-1] != _.max(relevantVolumeData)) {
+				volumeCriteria+= Number(relevantPriceData[index]) >= Number(relevantPriceData[index-1]) ? relevantVolumeData[index] * (1 + .05 * index) : - relevantVolumeData[index] * (1 + .05 * index);
 			}
 		});
 		return (volumeCriteria/chartData.averageVolume).toFixed(2);
@@ -198,14 +40,14 @@ angular.module('stockApp')
 	        method: 'get',
 	        url: 'http://localhost:4000/getWatchlist'
 	    }).then(function(response) {
-	    	$scope.watchlist2 = [];
+	    	$scope.editPageData.watchlist2 = [];
 	    	if(response.data && response.data.length) {
-	        	$scope.watchlist2 = response.data;
+	        	$scope.editPageData.watchlist2 = response.data;
 		    }
-	    	$scope.watchlistCopy = angular.copy($scope.watchlist);
+	    	$scope.editPageData.watchlistCopy = angular.copy($scope.editPageData.watchlist);
 
 	    	// get stock specific price
-	    	_.each($scope.watchlist2, function(obj) {
+	    	_.each($scope.editPageData.watchlist2, function(obj) {
 	    		var chartData = {days: [], price:[], volume:[]};
 		    	var jqObject = null;
 		    	var stockDetailsJSON = null;
@@ -248,7 +90,8 @@ angular.module('stockApp')
     				    	}
 
     				    	// compute volume Criteria
-    						obj.volumeCriteria = computeVolumeCriteria(chartData);
+    						obj.volumeCriteriaOld = Number(computeVolumeCriteria(chartData, 'old'));
+    						obj.volumeCriteriaNew = Number(computeVolumeCriteria(chartData, 'new'));
 
 	    	                obj.price = chartData.price[chartData.price.length-1];
 	    	                obj.volume = chartData.volume[chartData.volume.length-1];
@@ -256,9 +99,9 @@ angular.module('stockApp')
 	    	                obj.changeInPrice = chartData.price[chartData.price.length-2] ? Math.round(((chartData.price[chartData.price.length-1]-chartData.price[chartData.price.length-2])/chartData.price[chartData.price.length-2]*10000))/100 : 'NA';
 	    	                
 	    	                chartDataCollection.push(chartData);
-	    	                
+
 			    		}, function(error) {
-			    	        toggleMessageVisibility('Something went wrong. Please try after some time !!', false)
+			    	        CommonFactory.toggleMessageVisibility('Something went wrong. Please try after some time !!', false)
 			    	    });
 
 			    	});
@@ -274,8 +117,7 @@ angular.module('stockApp')
 		    	}
 	    	});
 	    }, function(error) {
-	    	console.log(error);
-	    	toggleMessageVisibility(error.data.message, false);
+	    	CommonFactory.toggleMessageVisibility(error.data.message, false);
 	    });
     }
 
@@ -285,54 +127,62 @@ angular.module('stockApp')
     };
 
     $scope.saveStockData = function() {
-    	if(!$scope.currentStock) {
+    	if(arguments && arguments[0] === false) {
+    		$scope.editPageData.currentStock=null;
+    		$scope.search.selectedStock = null;
+    		$scope.mode = null;
     		return;
     	}
-    	delete($scope.currentStock._id);
-    	delete($scope.currentStock.price);
-    	delete($scope.currentStock.changeInPrice);
-    	delete($scope.currentStock.volume);
+
+    	if(!$scope.editPageData.currentStock) {
+    		return;
+    	}
+
+    	delete($scope.editPageData.currentStock._id);
+    	delete($scope.editPageData.currentStock.price);
+    	delete($scope.editPageData.currentStock.changeInPrice);
+    	delete($scope.editPageData.currentStock.volume);
     	
 		$http({
             method: 'post',
             url: $scope.mode === 'add' ? 'http://localhost:4000/addStock' : 'http://localhost:4000/editStock',
-            data: {stock: $scope.currentStock}
+            data: {stock: $scope.editPageData.currentStock}
         }).then(function(response) {
         	if(response && response.data) {
-        		toggleMessageVisibility(response.data.message, response.data.saved)
+                CommonFactory.toggleMessageVisibility('Data saved successfully', true);
         		populateWatchlistData();
         	}
         }, function(error) {
-        	$scope.watchlist2 = $scope.watchlistCopy;
-        	toggleMessageVisibility('An error occured. View updated to previouly saved watchlist !!', false)
+        	$scope.editPageData.watchlist2 = $scope.editPageData.watchlistCopy;
+        	CommonFactory.toggleMessageVisibility('An error occured. View updated to previouly saved watchlist !!', false)
         });
 
     	$scope.mode = null;
-    	$scope.search.selectedState = null;
-       	$scope.currentStock = null;
+    	$scope.search.selectedStock = null;
+       	$scope.editPageData.currentStock = null;
     };
 
     $scope.onTypeaheadSelection = function() {
-        if($scope.search.selectedState) {
-		    var selectedStock = _.find($scope.search.states, {name: $scope.search.selectedState});
+        if($scope.search.selectedStock) {
+		    var selectedStock = _.find($scope.search.stock, {name: $scope.search.selectedStock});
 		    if(selectedStock) {
-		        $scope.currentStock.name = selectedStock.name;
-		        $scope.currentStock.id = selectedStock.id;
-		        $scope.currentStock.symbol = selectedStock.url.split('/')[2];
+		        $scope.editPageData.currentStock.name = selectedStock.name;
+		        $scope.editPageData.currentStock.id = selectedStock.id;
+		        $scope.editPageData.currentStock.symbol = selectedStock.url.split('/')[2];
 		    }
 		}
     };
 
     $scope.updateSearch = function() {
-        $http.get('https://www.screener.in/api/company/search/?q='+$scope.search.selectedState).then(function(response) {
-            $scope.search.states = response.data;
+        $http.get('https://www.screener.in/api/company/search/?q='+$scope.search.selectedStock).then(function(response) {
+            $scope.search.stock = response.data;
         });
     };
 
     $scope.addStock = function() {
     	$scope.mode = 'add';
     
-    	$scope.currentStock ={
+    	$scope.editPageData.currentStock ={
     		name: null,
     		note: null,
     		symbol: null,
@@ -343,34 +193,41 @@ angular.module('stockApp')
 
     $scope.editStock = function(stock) {
     	$scope.mode = 'edit';
-    	$scope.currentStock = stock;
+    	$scope.editPageData.currentStock = stock;
     };
 
     $scope.deleteStock = function(stock) {
-    	$scope.currentStock = stock;
+    	$scope.editPageData.currentStock = stock;
 		$http({
             method: 'post',
             url: 'http://localhost:4000/deleteStock',
-            data: { stock: $scope.currentStock}
+            data: { stock: $scope.editPageData.currentStock}
         }).then(function(response) {
-        	$scope.currentStock = null;
+        	$scope.editPageData.currentStock = null;
         	if(response && response.data && response.data.saved) {
-        		$scope.message.messageString = 'Data deleted successfully!!';
-        		$scope.message.messageStatus = true;
-        		$scope.watchlist2 = _.reject($scope.watchlist2, {symbol: stock.symbol});
+        		$scope.editPageData.watchlist2 = _.reject($scope.editPageData.watchlist2, {symbol: stock.symbol});
+        		CommonFactory.toggleMessageVisibility('Data removed successfully', true);
         	}
         }, function(error) {
-        	$scope.currentStock = null;
-        	console.log(error);
-        	$scope.message.messageString = 'An error occured. View updated to previouly saved watchlist !!';
-        	$scope.message.messageStatus = false;
+        	$scope.editPageData.currentStock = null;
+        	CommonFactory.toggleMessageVisibility('An error occured. View updated to previouly saved watchlist !!', false);
         });
     };
 
     $scope.orderBy = function(predicate) {
-    	$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
-    	$scope.predicate = predicate;
+    	$scope.editPageData.reverse = ($scope.editPageData.predicate === predicate) ? !$scope.editPageData.reverse : false;
+    	$scope.editPageData.predicate = predicate;
     };
+
+    $scope.updateNseValue = function() {
+    	CommonFactory.updateNseValue();
+    };
+
+    $scope.openNewsPopup = function(stock) {
+        CommonFactory.getNewsData(stock);
+    };
+
+    $scope.updateNseValue();
 
     populateWatchlistData();
 

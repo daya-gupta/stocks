@@ -24,7 +24,8 @@
     <!-- Add your site or application content here -->
     <div class="header">
       <div class="navbar navbar-default" role="navigation">
-        <div class="container">
+        <!-- <div class="container"> -->
+        <div class="col-xs-10 col-xs-offset-1">
           <div class="navbar-header">
 
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#js-navbar-collapse">
@@ -40,20 +41,29 @@
           <div class="collapse navbar-collapse" id="js-navbar-collapse">
 
             <ul class="nav navbar-nav">
-              <li ng-class="{'active': view=='home'}" ng-click="view='home'"><a href="#/">Home</a></li>
-              <li ng-class="{'active': view=='edit'}" ng-click="view='edit'"><a ng-href="#/editStock">Edit Stock Details</a></li>
-              <li ng-class="{'active': view=='watchlist'}" ng-click="view='watchlist'"><a ng-href="#/watchlist">Watchlist</a></li>
+              <li ng-class="{'active': view=='home'}"><a href="#/">Home</a></li>
+              <!-- <li ng-class="{'active': view=='edit'}" ng-click="view='edit'"><a ng-href="#/editStock">Edit Stock Details</a></li> -->
+              <li ng-class="{'active': view=='watchlist'}"><a ng-href="#/watchlist">Watchlist</a></li>
+            </ul>
+            <ul class="nav navbar-nav pull-right">
+              <li>
+                <span style="font-size:14px; margin-top: 14px; display: inline-block;">
+                  <a ng-click="updateNseValue()">Refresh &nbsp;&nbsp;</a>
+                  {{rootScopeData.valueNse}} ({{rootScopeData.changeNse}}, {{rootScopeData.pChangeNse}}%)
+                </span>
+              </li>
             </ul>
           </div>
         </div>
       </div>
+      <div class="message-container">
+        <div class="message" ng-class="{'error': !rootScopeData.messageStatus, 'success': rootScopeData.messageStatus}">{{rootScopeData.messageString}}</div>
+      </div>
     </div>
-    <div class="message-container">
-      <div class="message" ng-bind="message.messageString" ng-class="{'error': !message.messageStatus, 'success': message.messageStatus}"></div>
-    </div>
+    
 
     <!-- <div class="container"> -->
-    <div class="col-xs-10 col-xs-offset-1">
+    <div class="col-xs-10 col-xs-offset-1 view-container">
     <div ng-view=""></div>
     </div>
 

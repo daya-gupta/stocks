@@ -1,12 +1,17 @@
 <div id="container">
-	<input type="button" value="Search" class="btn" ng-class="{'btn-primary': search.selectedState}" style="float:right; margin-left: 5px;" ng-click="showStockDetails()">
+	<input type="button" value="Search" class="btn" ng-class="{'btn-primary': search.selectedStock}" style="float:right; margin-left: 5px;" ng-click="showStockDetails()">
 	<div style="float: right">
-		<input type="text" ng-change="updateSearch()" ng-model="search.selectedState" placeholder="search stock" uib-typeahead="state.name for state in search.states | filter:$viewValue | limitTo:5" typeahead-on-select="onTypeaheadSelection()" class="form-control">
+		<input type="text" ng-change="updateSearch()" ng-model="search.selectedStock" placeholder="search stock" uib-typeahead="stock.name for stock in search.stock | filter:$viewValue | limitTo:5" typeahead-on-select="onTypeaheadSelection()" class="form-control">
 	</div>
 	<input type="button" value="Add to Watchlist" class="btn" ng-class="" style="float:right; margin-left: 5px;" ng-click="addToWatchlist()">
 	<h1>
-		<span style="font-size: 18px;">{{stock.name}} ({{stock.symbol}})</span>
-		<a ng-click="openNewsPopup()">News</a>
+		<span style="font-size: 18px;">
+			{{stock.name}} ({{stock.symbol}})
+		</span>
+		<a class="btn btn-lg" ng-click="openNewsPopup()" data-toggle="modal" data-target="#newsModal">
+			News
+		</a>
+
 	</h1>
 	<div class="duration-container">
 		<div class="btn-group">
@@ -55,6 +60,32 @@
 	  	<input class="btn btn-primary col-sm-12" ng-show="showNotes" ng-click="showNotes=false" type="button" value="Hide Notes">
 	  	<input class="btn btn-primary col-sm-12" ng-show="showNotes" ng-click="saveNote()" type="button" value="Save">
 	  	<input class="btn btn-primary col-sm-12" ng-show="showNotes" ng-click="showNotes=false" type="button" value="Cancel">	
+	  </div>
+	</div>
+
+
+	<!-- Modal -->
+	<div class="modal fade" id="newsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel"></h4>
+	      </div>
+	      <div class="modal-body">
+	        <h3>Notification:</h3>
+	        <table class="table table-bordered" id="notification">
+	        </table>
+
+	        <h3>News:</h3>
+	        <table class="table table-bordered" id="news">
+	        </table>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Done</button>
+	        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+	      </div>
+	    </div>
 	  </div>
 	</div>
 </div>

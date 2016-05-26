@@ -8,7 +8,7 @@
  * Controller of the stockApp
  */
 angular.module('stockApp')
-  .controller('MainCtrl', function ($scope, $http, $q, $timeout) {
+  .controller('MainCtrl', function ($scope, $http, $q, $timeout, CommonFactory) {
   	
     // data initialization
     var chartData = {
@@ -17,9 +17,12 @@ angular.module('stockApp')
   		volume: []
   	};
     var deferred = null;
+
+    $scope.$root.view = 'home';
     
-    if($scope.$root.stock) {
-        $scope.stock = $scope.$root.stock;
+    if($scope.$root.stock || sessionStorage.getItem('selectedStock')) {
+        $scope.stock = $scope.$root.stock || JSON.parse(sessionStorage.getItem('selectedStock'));
+        sessionStorage.setItem('selectedStock', JSON.stringify($scope.stock));
     } else {
         $scope.stock = {
             name: 'Rajesh Exports',
@@ -31,45 +34,23 @@ angular.module('stockApp')
     $scope.latestPriceVolumeData = null;
 
     $scope.search = {
-        states : [],
-        selectedState: null
+        stock : [],
+        selectedStock: null
     };
 
-    $scope.$root.message = {
-        messageString: null,
-        messageStatus: false
-    };
+    $scope.duration = {};
 
-    $scope.duration = {
-        radioModel : 365
-    };
-
-    // function updateSearch2() {
-    //     console.log('1');
-    //     if(deferred) {
-    //         console.log('2');
-    //         deferred.reject();
-    //     }
-    //     deferred = $q.defer();
-    //     $timeout(function() {
-    //         console.log('3');
-    //         console.log(deferred);
-    //         deferred.resolve({});
-    //     }, 1000);
-    //     return deferred.promise;
-    // }
-
-    function toggleMessageVisibility(message, status) {
-        $scope.message.messageString = message;
-        $scope.message.messageStatus = status;
-        $timeout(function() {
-            $scope.message.messageString = null;
-        }, 4000);
+    if(sessionStorage.duration) {
+        $scope.duration.radioModel = Number(sessionStorage.getItem('duration'));
+    }
+    else {
+        $scope.duration.radioModel = 365;    
     }
     
+
     $scope.updateSearch = function() {
-        $http.get('https://www.screener.in/api/company/search/?q='+$scope.search.selectedState).then(function(response) {
-            $scope.search.states = response.data;
+        $http.get('https://www.screener.in/api/company/search/?q='+$scope.search.selectedStock).then(function(response) {
+            $scope.search.stock = response.data;
         });
     };
 
@@ -78,6 +59,7 @@ angular.module('stockApp')
     };
 
     $scope.durationChanged = function() {
+        sessionStorage.setItem('duration', $scope.duration.radioModel);
         getAPIData();
     };
 
@@ -93,10 +75,10 @@ angular.module('stockApp')
             data: {stock: data}
         }).then(function(response) {
             if(response && response.data) {
-                toggleMessageVisibility(response.data.message, response.data.saved);
+                CommonFactory.toggleMessageVisibility(response.data.message, response.data.saved);
             }
         }, function(error) {
-            toggleMessageVisibility('An error occured. Stock not added to watchlist !!', false);
+            CommonFactory.toggleMessageVisibility('An error occured. Stock not added to watchlist !!', false);
         });
     };
 
@@ -129,29 +111,30 @@ angular.module('stockApp')
             data: {stock: $scope.stock}
         }).then(function(response) {
             if(response && response.data) {
-                toggleMessageVisibility(response.data.message, response.data.saved);
+                CommonFactory.toggleMessageVisibility(response.data.message, response.data.saved);
             }
         }, function(error) {
-            toggleMessageVisibility('An error occured. View updated to previouly saved watchlist !!', false);
+            CommonFactory.toggleMessageVisibility('An error occured. View updated to previouly saved watchlist !!', false);
         });
     };
 
     $scope.showStockDetails = function() {
-        if($scope.search.selectedState) {
-            var selectedStock = _.find($scope.search.states, {name: $scope.search.selectedState});
-            $scope.search.selectedState = null;
+        if($scope.search.selectedStock) {
+            var selectedStock = _.find($scope.search.stock, {name: $scope.search.selectedStock});
+            $scope.search.selectedStock = null;
             $scope.stock = {};
             if(selectedStock) {
                 $scope.stock.name = selectedStock.name;
                 $scope.stock.id = selectedStock.id;
                 $scope.stock.symbol = selectedStock.url.split('/')[2];
                 $scope.$root.stock = $scope.stock;
-                 
+                sessionStorage.setItem('selectedStock', JSON.stringify($scope.stock));
+                                 
                 if(isNaN(Number(selectedStock.url.split('/')[2]))) {
                     getAPIData();
                 }
                 else {
-                    toggleMessageVisibility('stock not listed in nse !!', false);
+                    CommonFactory.toggleMessageVisibility('stock not listed in nse !!', false);
                     getAPIDataBSE();
                 }
             }
@@ -159,28 +142,14 @@ angular.module('stockApp')
     };
 
     $scope.openNewsPopup = function() {
-        // http://www.bseindia.com/stock-share-price/SiteCache/TabResult.aspx?text=531500&type=news
-        $http({
-            method: 'get',
-            url: 'http://www.bseindia.com/stock-share-price/SiteCache/TabResult.aspx?text='+531500+'&type=news'
-        }).then(function(response) {
-            if(response && response.data) {
-                console.log(response.data);
-            }
-        }, function(error) {
-            toggleMessageVisibility('An error occured while fetching news. !!', false);
-        });
-        $http({
-            method: 'get',
-            url: 'http://www.bseindia.com/stock-share-price/Notification.aspx?scripcode='+531500
-        }).then(function(response) {
-            if(response && response.data) {
-                console.log(response.data);
-            }
-        }, function(error) {
-            toggleMessageVisibility('An error occured while fetching news. !!', false);
-        });
+        CommonFactory.getNewsData($scope.stock);
     };
+
+    $scope.updateNseValue = function() {
+        CommonFactory.updateNseValue();
+    };
+
+    $scope.updateNseValue();
 
     function getAPIDataBSE() {
         chartData.days = [];
@@ -228,9 +197,9 @@ angular.module('stockApp')
                         }
                     }
                 }
-                renderChart();
+                CommonFactory.renderChart(chartData);
             }, function(error) {
-                toggleMessageVisibility('Something went wrong. Please try after some time !!', false);
+                CommonFactory.toggleMessageVisibility('Something went wrong. Please try after some time !!', false);
                 console.log(error);
             });
         });
@@ -287,7 +256,7 @@ angular.module('stockApp')
                             chartData.price.push(Math.round(obj[1]*10)/10);
                         }
                     });
-                    renderChart();
+                    CommonFactory.renderChart(chartData);
                 }
             }, function(error) {
                 console.log('Error!!');
@@ -419,149 +388,15 @@ angular.module('stockApp')
                                     }
                                 }
                             }
-                            renderChart();
+                            CommonFactory.renderChart(chartData);
                         });
                     
                     }
                 }
             });
     	}, function(error) {
-            toggleMessageVisibility('Something went wrong. Please try after some time !!', false);
+            CommonFactory.toggleMessageVisibility('Something went wrong. Please try after some time !!', false);
         });
-    }
-
-    function renderChart() {
-    	$(function () {
-    	    $('#chart-container').highcharts({
-    	        chart: {
-    	            zoomType: 'xy'
-    	        },
-    	        title: {
-    	            text: 'Stocks price - volume - earnings graph'
-    	        },
-    	        subtitle: {
-    	            text: 'Source: NA'
-    	        },
-    	        xAxis: [{
-    	            categories: chartData.days,
-    	            crosshair: true,
-    	        }],
-    	        yAxis: [{ // First yAxis
-    	            labels: {
-    	                format: 'Rs {value}',
-    	                style: {
-    	                    color: Highcharts.getOptions().colors[0]
-    	                }
-    	            },
-    	            title: {
-    	                text: 'Price',
-    	                style: {
-    	                    color: Highcharts.getOptions().colors[0]
-    	                }
-    	            },
-                    max: _.max(chartData.price),
-                    min: _.min(chartData.price)
-    	        }, { // Second yAxis
-                    labels: {
-                        format: '{value} Cr',
-                        style: {
-                            color: Highcharts.getOptions().colors[1]
-                        }
-                    },
-                    title: {
-                        text: 'revenue',
-                        style: {
-                            color: Highcharts.getOptions().colors[1]
-                        }
-                    }
-                },  { // Third yAxis
-    	            title: {
-    	                text: 'Volume (thousand)',
-    	                style: {
-    	                    color: Highcharts.getOptions().colors[1]
-    	                }
-    	            },
-    	            labels: {
-    	                style: {
-    	                    color: Highcharts.getOptions().colors[1]
-    	                }
-    	            },
-    	            opposite: true
-    	        }, { // Fourth yAxis
-                    gridLineWidth: 0,
-                    title: {
-                        text: 'Profit',
-                        style: {
-                            color: Highcharts.getOptions().colors[1]
-                        }
-                    },
-                    labels: {
-                        format: '{value} Cr',
-                        style: {
-                            color: Highcharts.getOptions().colors[1]
-                        }
-                    },
-                    opposite: true
-                }],
-    	        tooltip: {
-    	            shared: true,
-                    positioner: function () {
-                        return { x: 800, y: 0 };
-                    },
-                    shadow: false,
-                    borderWidth: 0
-    	        },
-    	        legend: {}, 
-    	        series: [{
-    	            name: 'Volume',
-    	            type: 'column',
-    	            yAxis: 2,
-    	            data: chartData.volume,
-    	            tooltip: {
-    	                valueSuffix: ' ths'
-    	            },
-                    color: Highcharts.getOptions().colors[3]
-    	        }, {
-    	            name: 'price',
-    	            type: 'area',
-                    yAxis: 0,
-    	            data: chartData.price,
-    	            tooltip: {
-    	                valueSuffix: ''
-    	            },
-                    color: Highcharts.getOptions().colors[0],
-                    fillColor: {
-                        linearGradient: [0, 0, 0, 200],
-                        stops: [
-                            [0, Highcharts.getOptions().colors[0]],
-                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                        ]
-                    }
-    	        }, {
-                    name: 'profit',
-                    type: 'spline',
-                    connectNulls: true,
-                    yAxis: 3,
-                    data: chartData.profit || [],
-                    dashStyle: 'shortdot',
-                    tooltip: {
-                        valueSuffix: ' Cr'
-                    },
-                    color: Highcharts.getOptions().colors[2]
-                }, {
-                    name: 'revenue',
-                    type: 'column',
-                    connectNulls: true,
-                    yAxis: 1,
-                    data: chartData.revenue || [],
-                    dashStyle: 'shortdot',
-                    tooltip: {
-                        valueSuffix: ' Cr'
-                    },
-                    color: Highcharts.getOptions().colors[1]
-                }]
-    	    });
-    	});
     }
 
     getAPIData();
