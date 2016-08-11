@@ -1,15 +1,9 @@
+'use strict';
+
 angular.module('stockApp')
   .factory('CommonFactory', function ($rootScope, $http, $timeout) {
   	
-    var self = this;
-
-    var factoryObj = {
-      formatDate: formatDate,
-      updateNseValue: updateNseValue,
-      toggleMessageVisibility: toggleMessageVisibility,
-      renderChart: renderChart,
-      getNewsData: getNewsData
-    };
+    var factoryObj = null;
 
     $rootScope.rootScopeData = {
       valueNse: null,
@@ -23,15 +17,15 @@ angular.module('stockApp')
         var date = moment().subtract(duration, 'days').format('L').split('/');
         var month = date.shift();
         date.splice(1,0,month);
-        date.join('-')
+        date.join('-');
         return date;
     }
 
     function updateNseValue() {
         $http.get('https://www1.nseindia.com/homepage/Indices1.json').then(function(response) {
-          $rootScope.rootScopeData.valueNse = response.data.data[1].lastPrice,
-          $rootScope.rootScopeData.changeNse = response.data.data[1].change,
-          $rootScope.rootScopeData.pChangeNse = response.data.data[1].pChange
+          $rootScope.rootScopeData.valueNse = response.data.data[1].lastPrice;
+          $rootScope.rootScopeData.changeNse = response.data.data[1].change;
+          $rootScope.rootScopeData.pChangeNse = response.data.data[1].pChange;
         });
     }
 
@@ -189,7 +183,7 @@ angular.module('stockApp')
         $http.get('http://www.bseindia.com/SiteCache/1D/GetQuoteData.aspx?Type=EQ&text='+stock.symbol).then(function(response) {
             searchSuggestion = $(response.data);
 
-            searchSuggestion = $(searchSuggestion.find('li a')[0]).attr('href').split('/');
+            searchSuggestion = searchSuggestion.find('li a').attr('href').split('/');
 
             searchSuggestion = searchSuggestion[searchSuggestion.length-2];
 
@@ -205,7 +199,7 @@ angular.module('stockApp')
                     console.log(notificationData);
                     $('#notification').html(notificationData);
                 }
-            }, function(error) {
+            }, function() {
                 factoryObj.toggleMessageVisibility('An error occured while fetching news. !!', false);
             });
 
@@ -222,11 +216,19 @@ angular.module('stockApp')
                     // notificationData.splice(0,1);
                     $('#news').html(newsData);
                 }
-            }, function(error) {
+            }, function() {
                 factoryObj.toggleMessageVisibility('An error occured while fetching news. !!', false);
             });
         });
     }
+
+    factoryObj = {
+      formatDate: formatDate,
+      updateNseValue: updateNseValue,
+      toggleMessageVisibility: toggleMessageVisibility,
+      renderChart: renderChart,
+      getNewsData: getNewsData
+    };
 
     return factoryObj;
   });

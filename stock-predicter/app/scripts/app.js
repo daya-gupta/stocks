@@ -15,8 +15,7 @@ angular
     'ngRoute',
     'ngTouch',
     'ui.bootstrap',
-    'ngLoadingSpinner',
-    'io.modernizr'
+    'ngLoadingSpinner'
   ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -34,6 +33,11 @@ angular
         templateUrl: 'views/watchlist.html',
         controller: 'WatchlistCtrl',
         controllerAs: 'watchlist'
+      })
+      .when('/portfolio', {
+        templateUrl: 'views/portfolio.html',
+        controller: 'PortfolioCtrl',
+        controllerAs: 'portfolio'
       })
       .otherwise({
         redirectTo: '/'

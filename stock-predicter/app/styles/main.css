@@ -194,3 +194,7 @@ table.watchlist {
 .navbar {
   margin-bottom: 0;
 }
+
+#loading-spinner > .spinner {
+  position: fixed !important;
+}

@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-    <!-- build:css(.) styles/vendor.css -->
+    <!-- build:css(app) styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
     <!-- endbower -->
@@ -44,6 +44,7 @@
               <li ng-class="{'active': view=='home'}"><a href="#/">Home</a></li>
               <!-- <li ng-class="{'active': view=='edit'}" ng-click="view='edit'"><a ng-href="#/editStock">Edit Stock Details</a></li> -->
               <li ng-class="{'active': view=='watchlist'}"><a ng-href="#/watchlist">Watchlist</a></li>
+              <li ng-class="{'active': view=='portfolio'}"><a ng-href="#/portfolio">Portfolio</a></li>
             </ul>
             <ul class="nav navbar-nav pull-right">
               <li>
@@ -73,7 +74,7 @@
       </div>
     </div>
 
-    <span us-spinner="{radius:30, width:8, length: 16}"></span>
+    <span id="loading-spinner" us-spinner="{radius:30, width:8, length: 16}"></span>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
      <script>
@@ -86,7 +87,8 @@
        ga('send', 'pageview');
     </script>
 
-    <!-- build:js(.) scripts/vendor.js -->
+    
+    <!-- build:js({.tmp,app}) scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
@@ -111,10 +113,12 @@
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/main.js"></script>
         <script src="scripts/controllers/edit.js"></script>
+        <script src="scripts/factories/common-factory.js"></script>
         <!-- endbuild -->
-    <script src="bower_components/angular-modernizr/src/scripts/placeholder.js"></script>
-    <script src="bower_components/angular-modernizr/src/scripts/reveal.text.js"></script>
 
-    <script src="scripts/common-factory.js"></script>
+
+    <!--<script src="scripts/common-factory.js"></script>
+    <script src="bower_components/angular-modernizr/src/scripts/placeholder.js"></script>
+    <script src="bower_components/angular-modernizr/src/scripts/reveal.text.js"></script>-->
 </body>
 </html>
