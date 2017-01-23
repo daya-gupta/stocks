@@ -111,8 +111,8 @@ angular.module('stockApp')
         			           	}
     				    	}
 
-                            var tempV = angular.copy(chartData.volume);
-                            tempV.pop();
+                            // var tempV = angular.copy(chartData.volume);
+                            // tempV.pop();
 
     				    	// compute volume Criteria
     						// obj.volumeCriteriaOld = Number(computeVolumeCriteria(chartData, 'old'));
@@ -121,7 +121,7 @@ angular.module('stockApp')
           //                   obj.trendCriteria = computeTrendCriteria(chartData);
           //                   obj.averageCriteria = (Number(obj.trendCriteria) + Number(obj.volumeCriteriaNew)).toFixed(1)/2;
 
-                            obj.volumeCriteriaOld = Number((chartData.volume[chartData.volume.length-1]+chartData.volume[chartData.volume.length-2])/Math.round(_.mean(tempV))).toFixed(2);
+                            obj.volumeCriteriaOld = Number((chartData.volume[chartData.volume.length-1]+chartData.volume[chartData.volume.length-2])/(2*chartData.averageVolume)).toFixed(2);
                         
                             obj.price = chartData.price[chartData.price.length-1];
 	    	                obj.volume = chartData.volume[chartData.volume.length-1];
@@ -193,8 +193,8 @@ angular.module('stockApp')
                         chartData.volume.pop();
                         chartData.averageVolume = Math.round(_.mean(chartData.volume)*100)/100;
 
-                        var tempV = angular.copy(chartData.volume);
-                        tempV.pop();
+                        // var tempV = angular.copy(chartData.volume);
+                        // tempV.pop();
 
                         // compute volume Criteria
                         // obj.volumeCriteriaOld = Number(computeVolumeCriteria(chartData, 'old'));
@@ -203,8 +203,9 @@ angular.module('stockApp')
                         // obj.trendCriteria = computeTrendCriteria(chartData);
                         // obj.averageCriteria = (Number(obj.trendCriteria) + Number(obj.volumeCriteriaNew)).toFixed(1)/2;
                         
-                        obj.volumeCriteriaOld = Number((chartData.volume[chartData.volume.length-1]+chartData.volume[chartData.volume.length-2])/Math.round(_.mean(tempV))).toFixed(2);
-                            
+                        // obj.volumeCriteriaOld = Number((chartData.volume[chartData.volume.length-1]+chartData.volume[chartData.volume.length-2])/Math.round(_.mean(tempV))).toFixed(2);
+                        obj.volumeCriteriaOld = Number((chartData.volume[chartData.volume.length-1]+chartData.volume[chartData.volume.length-2])/(2*chartData.averageVolume)).toFixed(2);
+                        
                         obj.price = chartData.price[chartData.price.length-1];
                         obj.volume = chartData.volume[chartData.volume.length-1];
                         obj.changeInVolume = chartData.averageVolume ? Math.round((chartData.volume[chartData.volume.length-1])/chartData.averageVolume*100)/100 : 'NA';
@@ -238,7 +239,9 @@ angular.module('stockApp')
         }).then(function(response) {
         	if(response && response.data) {
                 CommonFactory.toggleMessageVisibility('Data saved successfully', true);
-        		populateWatchlistData();
+        		if($scope.mode === 'add') {
+                    populateWatchlistData();
+                }
         	}
         }, function(error) {
         	$scope.editPageData.watchlist2 = $scope.editPageData.watchlistCopy;

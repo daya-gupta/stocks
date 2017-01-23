@@ -43,6 +43,12 @@ angular.module('stockApp')
     }
 
     function renderChart(chartData) {
+      
+      _.each(chartData, function(item) {
+        item.actualPrice = Number(item.price) + Math.round(Number(item.price)/10);
+      });
+      console.log(chartData);
+
       $(function () {
           $('#chart-container').highcharts({
               chart: {
@@ -71,8 +77,8 @@ angular.module('stockApp')
                           color: Highcharts.getOptions().colors[0]
                       }
                   },
-                    max: _.max(chartData.price),
-                    min: _.min(chartData.price)
+                  max: _.max(chartData.price),
+                  min: _.min(chartData.price)
               }, { // Second yAxis
                     labels: {
                         format: '{value} Cr',
@@ -114,7 +120,22 @@ angular.module('stockApp')
                         }
                     },
                     opposite: true
-                }],
+              }, { // First yAxis
+                  labels: {
+                      format: 'Rs {value}',
+                      style: {
+                          color: Highcharts.getOptions().colors[0]
+                      }
+                  },
+                  title: {
+                      text: 'Actual Price',
+                      style: {
+                          color: Highcharts.getOptions().colors[0]
+                      }
+                  },
+                  max: _.max(chartData.actualPrice),
+                  min: _.min(chartData.actualPrice)
+              }],
               tooltip: {
                   shared: true,
                     positioner: function () {
@@ -125,15 +146,6 @@ angular.module('stockApp')
               },
               legend: {}, 
               series: [{
-                  name: 'Volume',
-                  type: 'column',
-                  yAxis: 2,
-                  data: chartData.volume,
-                  tooltip: {
-                      valueSuffix: ' ths'
-                  },
-                    color: Highcharts.getOptions().colors[3]
-              }, {
                   name: 'price',
                   type: 'area',
                     yAxis: 0,
@@ -150,28 +162,53 @@ angular.module('stockApp')
                         ]
                     }
               }, {
-                    name: 'profit',
-                    type: 'spline',
-                    connectNulls: true,
-                    yAxis: 3,
-                    data: chartData.profit || [],
-                    dashStyle: 'shortdot',
-                    tooltip: {
-                        valueSuffix: ' Cr'
-                    },
-                    color: Highcharts.getOptions().colors[2]
-                }, {
-                    name: 'revenue',
-                    type: 'column',
-                    connectNulls: true,
-                    yAxis: 1,
-                    data: chartData.revenue || [],
-                    dashStyle: 'shortdot',
-                    tooltip: {
-                        valueSuffix: ' Cr'
-                    },
-                    color: Highcharts.getOptions().colors[1]
-                }]
+                  name: 'Volume',
+                  type: 'column',
+                  yAxis: 2,
+                  data: chartData.volume,
+                  tooltip: {
+                      valueSuffix: ' ths'
+                  },
+                    color: Highcharts.getOptions().colors[3]
+              }, {
+                  name: 'revenue',
+                  type: 'column',
+                  connectNulls: true,
+                  yAxis: 1,
+                  data: chartData.revenue || [],
+                  dashStyle: 'shortdot',
+                  tooltip: {
+                      valueSuffix: ' Cr'
+                  },
+                  color: Highcharts.getOptions().colors[1]
+              }, {
+                  name: 'profit',
+                  type: 'spline',
+                  connectNulls: true,
+                  yAxis: 3,
+                  data: chartData.profit || [],
+                  dashStyle: 'shortdot',
+                  tooltip: {
+                      valueSuffix: ' Cr'
+                  },
+                  color: Highcharts.getOptions().colors[2]
+              }, {
+                  name: 'price',
+                  type: 'spline',
+                  yAxis: 0,
+                  data: chartData.actualPrice,
+                  tooltip: {
+                      valueSuffix: ''
+                  },
+                    color: Highcharts.getOptions().colors[0],
+                    fillColor: {
+                        linearGradient: [0, 0, 0, 100],
+                        stops: [
+                            [0, Highcharts.getOptions().colors[0]],
+                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                        ]
+                    }
+              }]
           });
       });
     }

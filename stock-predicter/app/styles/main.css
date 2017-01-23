@@ -1,3 +1,8 @@
+body {
+  font-family: serif !important;
+}
+
+
 .browsehappy {
   margin: 0.2em 0;
   background: #ccc;
@@ -9,7 +14,33 @@ body {
   padding: 0;
 }
 
-/* Everything but the jumbotron gets side spacing for mobile first views */
+#login-container .login-overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ccc;
+  z-index: 99;
+}
+
+#login-container .form-container {
+  width: 440px;
+  height: 240px;
+  margin: 0 auto;
+  margin-top: 140px;
+  border-radius: 5px;
+  border: 1px solid #aaa;
+  background: white;
+  padding: 40px;
+}
+
+#login-container input {
+    display: block;
+    height: 36px;
+    width: 260px;
+    margin-bottom: 20px;
+}
 
 .view-container {
   margin-top: 76px;

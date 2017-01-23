@@ -14,8 +14,22 @@ app.use(function(req, res, next) {
   next();
 });
 
+app.get("/getCsrfToken", function(req, res){
+  res.json({csrf: '1234-5678-9012'});
+});
+
+app.post("/authenticateUser", function(req, res){
+  if(req.body.password === 'Test@1234' && req.body.csrf === '1234-5678-9012') {
+    res.json({name: 'Test', userId: 'Test'});
+    res.cookie(authToken, 'abcd-efgh-ijkl');
+  } else {
+    res.status = 400;
+    res.json({errorMessage: 'UserId or Password is incorrect. Please Try again.'});
+  }
+});
+
 app.get("/getStockSymbol",function(req,res){
-    var MongoClient = mongodb.MongoClient;
+  var MongoClient = mongodb.MongoClient;
 	var url = 'mongodb://localhost:27017/stocksData';
 	MongoClient.connect(url, function(err, db) {
 		if(err) {

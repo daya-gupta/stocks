@@ -248,53 +248,6 @@ angular.module('stockApp')
                 CommonFactory.renderChart(chartData);
             }
         });
-
-        // $http({
-        //     method: 'get',
-        //     url: 'https://www.screener.in/api/company/'+$scope.stock.id+'/prices/?what=years&period=3'
-        // }).then(function(response) {
-        //     chartData.price = response.data.prices;
-        //     chartData.days = response.data.dates;
-        //     _.each(chartData.days, function(obj, index) {
-        //         chartData.days[index] = obj.split(' ').join('-');
-        //         chartData.volume.push(null);
-        //         chartData.profit.push(null);
-        //         chartData.revenue.push(null);
-        //     });
-
-        //     $http({
-        //         method: 'get',
-        //         url: 'https://www.screener.in/api/company/'+$scope.stock.symbol
-        //     }).then(function(response) {
-        //         if(response.data) {
-        //             for(var item in response.data.number_set.quarters[0][1]) {
-        //                 var index = -1;
-        //                 var t_sdate=item;                  
-        //                 var sptdate = String(t_sdate).split("-");
-        //                 var myMonth = sptdate[1];
-        //                 var myDay = sptdate[2];
-        //                 var myYear = sptdate[0];
-        //                 var combineDatestr = myYear + "/" + myMonth + "/" + myDay;
-        //                 myMonth = moment(combineDatestr).format('ll').split(' ')[0];
-        //                 combineDatestr = myDay + "-" + myMonth + "-" + myYear;
-
-        //                 for(var i = 0; i < 7; i++) {
-        //                     combineDatestr = (myDay-i) + "-" + myMonth + "-" + myYear;
-        //                     index = _.indexOf(chartData.days, combineDatestr);
-        //                     if(index !== -1) {
-        //                         chartData.profit[index] = Number(response.data.number_set.quarters[9][1][item]);
-        //                         chartData.revenue[index] = Number(response.data.number_set.quarters[0][1][item]);
-        //                         break;
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //         CommonFactory.renderChart(chartData);
-        //     }, function(error) {
-        //         CommonFactory.toggleMessageVisibility('Something went wrong. Please try after some time !!', false);
-        //         console.log(error);
-        //     });
-        // });
     }
 
     function renderTabularData(data) {
@@ -363,6 +316,9 @@ angular.module('stockApp')
         chartData.profit = [];
 
         var symbol = $scope.stock.symbol;
+        if(symbol.indexOf('&')!=-1) {
+            symbol = symbol.replace('&', '%26');
+        };
         var duration = $scope.duration.radioModel > 1095 ? $scope.duration.radioModel : 1095;
         var fromDate = formatDate(duration+1);
         var toDate = formatDate(0);
@@ -371,7 +327,7 @@ angular.module('stockApp')
         $http({
     		method: 'get',
             cache: true,
-            url: 'http://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/getHistoricalData.jsp?symbol='+symbol+'&series=EQ&fromDate='+fromDate+'&toDate='+toDate
+            url: 'https://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/getHistoricalData.jsp?symbol='+symbol+'&series=EQ&fromDate='+fromDate+'&toDate='+toDate
     	}).then(function(response) {
             var day = $(response.data);
             var dataRows = _.compact($(day[4]).find('tr'));

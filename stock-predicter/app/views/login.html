@@ -1,0 +1,17 @@
+<div id="login-container">
+    <div class="login-overlay">
+        <div class="form-container">
+            
+            <h2>{{errorMessage}}</h2>
+
+            <form novalidate="" ng-submit="submitLoginForm()">
+                <input type="text" name="userId" placeholder="User ID" ng-model="loginFormData.userId" required>
+                <input type="password" name="password" placeholder="Password" ng-model="loginFormData.password" required>
+                <button>Submit</button>
+
+                <input type="hidden" name="csrf" ng-model="csrf">
+            </form>
+
+        </div>
+    </div>
+</div>
