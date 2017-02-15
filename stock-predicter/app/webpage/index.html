@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>AKQA</title>
+		<meta charset="utf-8">
+		<link href="https://fonts.googleapis.com/css?family=Droid+Serif" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="styles.css">
+	</head>
+	<body>
+		<article>
+			<header>
+				<div class="logo"></div>
+				<h1>Your Basket</h1>
+				<p>
+					Items you have added to your basket are shown below.
+					<br>
+					Adjust the quantities or remove items before continuing your purchase.
+				</p>
+			</header>
+			<section>
+				<table>
+					<thead>
+						<tr>
+							<th class="product-header">Product</th>
+							<th class="price-header">Price</th>
+							<th class="quantity-header">Qty</th>
+							<th class="cost-header">Cost</th>
+							<th class="remove-header"></th>
+						</tr>	
+					</thead>
+					<tbody id="selectedItems">
+						<!-- cart items will be added here -->
+					</tbody>
+					<tfoot>
+						<tr class="subtotal-row">
+							<td>Subtotal</td>
+							<td></td>
+							<td></td>
+							<td id="subtotal" class="cost"></td>
+							<td></td>
+						</tr>
+						<tr class="vat-row">
+							<td>VAT @ 20%</td>
+							<td></td>
+							<td></td>
+							<td id="vat" class="cost"></td>
+							<td></td>
+						</tr>
+						<tr class="total-row">
+							<td>Total Cost</td>
+							<td></td>
+							<td></td>
+							<td id="total" class="cost"></td>
+							<td></td>
+						</tr>
+					</tfoot>
+				</table>
+				<div class="btn-container">
+					<button type="button" id="btn-buy-now">Buy Now >></button>
+				</div>
+			</section>			
+		</article>
+		<footer>
+			&copy; 2013 AKQA Ltd.
+		</footer>
+	</body>
+	<script type="text/javascript" src="main.js"></script>
+</html>

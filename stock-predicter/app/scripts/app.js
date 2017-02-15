@@ -45,6 +45,6 @@ angular
         controllerAs: 'login'
       })
       .otherwise({
-        redirectTo: '/login'
+        redirectTo: '/company'
       });
   });
