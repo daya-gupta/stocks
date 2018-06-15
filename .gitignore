@@ -1,4 +1,5 @@
 /stock-predicter/node_modules/*
+/stock-predicter/server/*
 /stock-predicter/dist/*
 /stock-predicter/.tmp/*
 /stock-predicter/.sass-cache/*
