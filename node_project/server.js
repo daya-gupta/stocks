@@ -3,6 +3,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var mongodb = require('mongodb');
+var https = require('https');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -72,6 +73,100 @@ app.get("/getWatchlist",function(req,res){
 	});
 });
 
+app.get("/getSearchResult", function(req,res){
+	const query = req.query.q;
+	https.get('https://www.screener.in/api/company/search/?q=' + query, (response) => {
+		let data = '';
+
+		// A chunk of data has been recieved.
+		response.on('data', (chunk) => {
+			data += chunk;
+		}).on('end', () => {
+			// console.log(JSON.parse(data).explanation);
+			res.end(data);
+		}).on("error", (err) => {
+			console.log("Error: " + err.message);
+			res.end(err.message);
+    	});
+	});
+});
+
+app.get("/getStockData", function(req,res){
+	const query = req.query;
+	let queryString = '';
+	for(const q in query) {
+		queryString += `${q}=${query[q]}&`;
+	}
+	https.get('https://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/getHistoricalData.jsp?' + queryString, (response) => {
+		let data = '';
+
+		// A chunk of data has been recieved.
+		response.on('data', (chunk) => {
+			data += chunk;
+		}).on('end', () => {
+			// console.log(JSON.parse(data).explanation);
+			res.send(data);
+		}).on("error", (err) => {
+			console.log("Error: " + err.message);
+			res.end(err.message);
+    	});
+	});
+});
+
+app.get("/getStockDataNSE", function(req,res){
+	const query = req.query;
+	let queryString = '';
+	for(const q in query) {
+		queryString += `${q}=${query[q]}&`;
+	}
+	https.get('https://www1.nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?' + queryString, (response) => {
+		let data = '';
+
+		// A chunk of data has been recieved.
+		response.on('data', (chunk) => {
+			data += chunk;
+		}).on('end', () => {
+			// console.log(JSON.parse(data).explanation);
+			res.send(data);
+		}).on("error", (err) => {
+			console.log("Error: " + err.message);
+			res.end(err.message);
+    	});
+	});
+});
+
+app.get('/apiData', (req, res) => {
+	// make api call and
+	const query = req.query;
+	let queryString = '';
+	for(const q in query) {
+		queryString += `${q}=${query[q]}&`;
+	}
+	
+    // https.get('https://www.screener.in/api/2/company/2992/prices/?days=365', (resp) => {
+    https.get('https://www.nseindia.com/charts/webtame/tame_intraday_getQuote_closing_redgreen.jsp?' + queryString, (resp) => {
+    let data = '';
+
+    // A chunk of data has been recieved.
+    resp.on('data', (chunk) => {
+        data += chunk;
+    });
+
+    // The whole response has been received. Print out the result.
+    resp.on('end', () => {
+        // console.log(JSON.parse(data).explanation);
+        res.end(data);
+    });
+
+    }).on("error", (err) => {
+        console.log("Error: " + err.message);
+        res.end(err.message);
+    });
+
+    // res.end('result awaited');
+
+})
+
 app.post("/saveStockProfile",function(req,res){
   // var json_data = {"name":"amita","pass":"12345"};
   var MongoClient = mongodb.MongoClient;
@@ -121,6 +216,26 @@ app.post("/saveStockProfile",function(req,res){
   		});
   	}
   });
+});
+
+app.post("/getDailyPrice",function(req,res){
+	var url = req.body.url
+	console.log(url);
+	https.get(req.body.url, (response) => {
+		// let data = '';
+		// // A chunk of data has been recieved.
+		// resp.on('data', (chunk) => {
+		// 	data += chunk;
+		// });
+		// The whole response has been received. Print out the result.
+		response.on('end', () => {
+			// console.log(JSON.parse(data).explanation);
+			res.send(response)
+		});
+	}).on('error', (error) => {
+		console.log("Error: " + error.message);
+		res.send(error);
+	});
 });
 
 app.get("/getStockProfile",function(req,res){
@@ -256,4 +371,6 @@ app.post("/editStock",function(req,res){
 });
 
 // Set server port
-app.listen(4000);
+app.listen(4000, () => {
+  console.log('server started!!');
+});

@@ -47,12 +47,14 @@ angular.module('stockApp')
         $scope.duration.radioModel = 365;    
     }
     
-
     $scope.updateSearch = function() {
-        $http.get('https://www.screener.in/api/company/search/?q='+$scope.search.selectedStock).then(function(response) {
+        // $http.get('https://www.screener.in/api/company/search/?q='+$scope.search.selectedStock).then(function(response) {
+        $http.get('http://localhost:4000/getSearchResult?q='+$scope.search.selectedStock).then(function(response) {
             $scope.search.stock = response.data;
         });
     };
+
+    // $http.get('http://localhost:4000/getWatchlist?')
 
     $scope.onTypeaheadSelection = function() {
         $scope.showStockDetails();
@@ -289,7 +291,8 @@ angular.module('stockApp')
             
             $http({
                 method: 'get',
-                url: 'https://www.nseindia.com/charts/webtame/tame_intraday_getQuote_closing_redgreen.jsp?CDSymbol='+$scope.stock.symbol+'&Segment=CM&Series=EQ&CDExpiryMonth=&FOExpiryMonth=&IRFExpiryMonth=&CDDate1=&CDDate2=&PeriodType=2&Periodicity=1&Template=tame_intraday_getQuote_closing_redgreen.jsp'
+                // url: 'https://www.nseindia.com/charts/webtame/tame_intraday_getQuote_closing_redgreen.jsp?CDSymbol='+$scope.stock.symbol+'&Segment=CM&Series=EQ&CDExpiryMonth=&FOExpiryMonth=&IRFExpiryMonth=&CDDate1=&CDDate2=&PeriodType=2&Periodicity=1&Template=tame_intraday_getQuote_closing_redgreen.jsp'
+                url: 'http://localhost:4000/apiData?CDSymbol='+$scope.stock.symbol+'&Segment=CM&Series=EQ&CDExpiryMonth=&FOExpiryMonth=&IRFExpiryMonth=&CDDate1=&CDDate2=&PeriodType=2&Periodicity=1&Template=tame_intraday_getQuote_closing_redgreen.jsp'
             }).then(function(response) {
                 console.log(response);
                 var temp = null;
@@ -327,8 +330,13 @@ angular.module('stockApp')
         $http({
     		method: 'get',
             cache: true,
-            url: 'https://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/getHistoricalData.jsp?symbol='+symbol+'&series=EQ&fromDate='+fromDate+'&toDate='+toDate
-    	}).then(function(response) {
+            // url: 'https://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/getHistoricalData.jsp?symbol='+symbol+'&series=EQ&fromDate='+fromDate+'&toDate='+toDate
+            url: 'http://localhost:4000/getStockData?symbol='+symbol+'&series=EQ&fromDate='+fromDate+'&toDate='+toDate
+        
+            // // url: 'https://www.nseindia.com/charts/webtame/tame_intraday_getQuote_closing_redgreen.jsp?CDSymbol='+$scope.stock.symbol+'&Segment=CM&Series=EQ&CDExpiryMonth=&FOExpiryMonth=&IRFExpiryMonth=&CDDate1=&CDDate2=&PeriodType=2&Periodicity=1&Template=tame_intraday_getQuote_closing_redgreen.jsp'
+            // url: 'http://localhost:4000/apiData?CDSymbol='+$scope.stock.symbol+'&Segment=CM&Series=EQ&CDExpiryMonth=&FOExpiryMonth=&IRFExpiryMonth=&CDDate1=&CDDate2=&PeriodType=2&Periodicity=1&Template=tame_intraday_getQuote_closing_redgreen.jsp'
+            
+        }).then(function(response) {
             var day = $(response.data);
             var dataRows = _.compact($(day[4]).find('tr'));
             var noOfRecords = Math.round($scope.duration.radioModel*.7);
@@ -358,7 +366,8 @@ angular.module('stockApp')
             // get today's data from NSE    
             $http({
                 method: 'get',
-                url: 'https://www1.nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol='+symbol+'&illiquid=0&smeFlag=0&itpFlag=0'
+                // url: 'https://www1.nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol='+symbol+'&illiquid=0&smeFlag=0&itpFlag=0'
+                url: 'http://localhost:4000/getStockDataNSE?symbol='+symbol+'&illiquid=0&smeFlag=0&itpFlag=0'
             }).then(function(response) {
                 var stockDetailsJSON = null;
                 var jqObject = null;
@@ -368,7 +377,7 @@ angular.module('stockApp')
                 
                 jqObject = $(response.data).find('#responseDiv');
 
-                if(jqObject && jqObject.length) {
+                if(jqObject && jqObject.length && JSON.parse(jqObject.text()).data) {
                     stockDetailsJSON = JSON.parse(jqObject.text()).data[0];
                     // append today's data to historical data array
                     // if(stockDetailsJSON.secDate && stockDetailsJSON.secDate.slice(0,2) !== chartData.days[chartData.days.length-1].slice(0,2)) {
@@ -409,17 +418,26 @@ angular.module('stockApp')
                         // profit and revenue data from screener
                         $http({
                             method: 'get',
-                            url: 'https://www.screener.in/api/company/'+symbol
+                            // url: 'https://www.screener.in/company/'+symbol+'/consolidated/'
+                            url: 'https://www.screener.in/company/'+symbol
                         }).then(function(response) {
+                            console.log(response.data);
+                            const quartersNode = $(response.data).find('#quarters');
+
+                            const dateItems = quartersNode.find('tr')[0].querySelectorAll('th');
+                            const revenueItems = quartersNode.find('tr')[1].querySelectorAll('td');
+                            const profitItems = quartersNode.find('tr')[10].querySelectorAll('td');
+
                             var index = -1;
                         
-                            if(response.data) {
-                                for(var item in response.data.number_set.quarters[0][1]) {
-                                    var t_sdate=item;                  
-                                    var sptdate = String(t_sdate).split("-");
-                                    var myMonth = sptdate[1];
-                                    var myDay = sptdate[2];
-                                    var myYear = sptdate[0];
+                            if(dateItems && dateItems.length) {
+                                for(var j = 1; j < dateItems.length; j++) {
+                                    var t_sdate=dateItems[j].innerText;                  
+                                    var sptdate = String(t_sdate).split(" ");
+                                    var myMonth = sptdate[0];
+                                    // var myDay = sptdate[2];
+                                    var myDay = 30;
+                                    var myYear = sptdate[1];
                                     var combineDatestr = myYear + "/" + myMonth + "/" + myDay;
                                     myMonth = moment(combineDatestr).format('ll').split(' ')[0];
                                     combineDatestr = myDay + "-" + myMonth + "-" + myYear;
@@ -428,8 +446,8 @@ angular.module('stockApp')
                                         combineDatestr = (myDay-i) + "-" + myMonth + "-" + myYear;
                                         index = _.indexOf(chartData.days, combineDatestr);
                                         if(index !== -1) {
-                                            chartData.profit[index] = Number(response.data.number_set.quarters[9][1][item]);
-                                            chartData.revenue[index] = Number(response.data.number_set.quarters[0][1][item]);
+                                            chartData.profit[index] = Number(profitItems[j].innerText.trim().replace(/,/g, ''));
+                                            chartData.revenue[index] = Number(revenueItems[j].innerText.trim().replace(/,/g, ''));
                                             break;
                                         }
                                     }
@@ -439,6 +457,43 @@ angular.module('stockApp')
                         });
                     
                     }
+
+                    // if($scope.duration.radioModel > 1) {
+                    //     // profit and revenue data from screener
+                    //     $http({
+                    //         method: 'get',
+                    //         url: 'https://www.screener.in/api/company/'+symbol
+                    //     }).then(function(response) {
+                    //         var index = -1;
+                        
+                    //         if(response.data) {
+                    //             for(var item in response.data.number_set.quarters[0][1]) {
+                    //                 var t_sdate=item;                  
+                    //                 var sptdate = String(t_sdate).split("-");
+                    //                 var myMonth = sptdate[1];
+                    //                 var myDay = sptdate[2];
+                    //                 var myYear = sptdate[0];
+                    //                 var combineDatestr = myYear + "/" + myMonth + "/" + myDay;
+                    //                 myMonth = moment(combineDatestr).format('ll').split(' ')[0];
+                    //                 combineDatestr = myDay + "-" + myMonth + "-" + myYear;
+
+                    //                 for(var i = 0; i < 7; i++) {
+                    //                     combineDatestr = (myDay-i) + "-" + myMonth + "-" + myYear;
+                    //                     index = _.indexOf(chartData.days, combineDatestr);
+                    //                     if(index !== -1) {
+                    //                         chartData.profit[index] = Number(response.data.number_set.quarters[9][1][item]);
+                    //                         chartData.revenue[index] = Number(response.data.number_set.quarters[0][1][item]);
+                    //                         break;
+                    //                     }
+                    //                 }
+                    //             }
+                    //         }
+                    //         CommonFactory.renderChart(chartData);
+                    //     });
+                    
+                    // }
+                    CommonFactory.renderChart(chartData);
+
                 }
             });
     	}, function(error) {
