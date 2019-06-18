@@ -4,6 +4,7 @@ var app = express();
 var bodyParser = require('body-parser');
 var mongodb = require('mongodb');
 var https = require('https');
+var path = require('path');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -14,6 +15,8 @@ app.use(function(req, res, next) {
   // res.header("Access-Control-Allow-Origin");
   next();
 });
+
+app.use(express.static(path.resolve(__dirname, 'dist')));
 
 app.get("/getCsrfToken", function(req, res){
   res.json({csrf: '1234-5678-9012'});
