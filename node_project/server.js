@@ -6,6 +6,8 @@ var mongodb = require('mongodb');
 var https = require('https');
 var path = require('path');
 
+const port = process.env.PORT || 80;
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -374,6 +376,6 @@ app.post("/editStock",function(req,res){
 });
 
 // Set server port
-app.listen(4000, () => {
+app.listen(port, () => {
   console.log('server started!!');
 });

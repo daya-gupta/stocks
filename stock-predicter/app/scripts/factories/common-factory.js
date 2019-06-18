@@ -22,11 +22,11 @@ angular.module('stockApp')
     }
 
     function updateNseValue() {
-        $http.get('https://www1.nseindia.com/homepage/Indices1.json').then(function(response) {
-          $rootScope.rootScopeData.valueNse = response.data.data[1].lastPrice;
-          $rootScope.rootScopeData.changeNse = response.data.data[1].change;
-          $rootScope.rootScopeData.pChangeNse = response.data.data[1].pChange;
-        });
+        // $http.get('https://www1.nseindia.com/homepage/Indices1.json').then(function(response) {
+        //   $rootScope.rootScopeData.valueNse = response.data.data[1].lastPrice;
+        //   $rootScope.rootScopeData.changeNse = response.data.data[1].change;
+        //   $rootScope.rootScopeData.pChangeNse = response.data.data[1].pChange;
+        // });
     }
 
     var timeoutPrimise = null;

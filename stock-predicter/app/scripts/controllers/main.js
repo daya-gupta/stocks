@@ -49,12 +49,12 @@ angular.module('stockApp')
     
     $scope.updateSearch = function() {
         // $http.get('https://www.screener.in/api/company/search/?q='+$scope.search.selectedStock).then(function(response) {
-        $http.get('http://localhost:4000/getSearchResult?q='+$scope.search.selectedStock).then(function(response) {
+        $http.get('/getSearchResult?q='+$scope.search.selectedStock).then(function(response) {
             $scope.search.stock = response.data;
         });
     };
 
-    // $http.get('http://localhost:4000/getWatchlist?')
+    // $http.get('/getWatchlist?')
 
     $scope.onTypeaheadSelection = function() {
         $scope.showStockDetails();
@@ -73,7 +73,7 @@ angular.module('stockApp')
         };
         $http({
             method: 'post',
-            url: 'http://localhost:4000/addStock',
+            url: '/addStock',
             data: {stock: data}
         }).then(function(response) {
             if(response && response.data) {
@@ -89,7 +89,7 @@ angular.module('stockApp')
 
         $http({
             method: 'get',
-            url: 'http://localhost:4000/getWatchlist'
+            url: '/getWatchlist'
         }).then(function(response) {
             if(response.data && response.data.length) {
                 var stock = _.find(response.data, {symbol: $scope.stock.symbol});
@@ -109,7 +109,7 @@ angular.module('stockApp')
 
         $http({
             method: 'post',
-            url: 'http://localhost:4000/editStock',
+            url: '/editStock',
             data: {stock: $scope.stock}
         }).then(function(response) {
             if(response && response.data) {
@@ -292,7 +292,7 @@ angular.module('stockApp')
             $http({
                 method: 'get',
                 // url: 'https://www.nseindia.com/charts/webtame/tame_intraday_getQuote_closing_redgreen.jsp?CDSymbol='+$scope.stock.symbol+'&Segment=CM&Series=EQ&CDExpiryMonth=&FOExpiryMonth=&IRFExpiryMonth=&CDDate1=&CDDate2=&PeriodType=2&Periodicity=1&Template=tame_intraday_getQuote_closing_redgreen.jsp'
-                url: 'http://localhost:4000/apiData?CDSymbol='+$scope.stock.symbol+'&Segment=CM&Series=EQ&CDExpiryMonth=&FOExpiryMonth=&IRFExpiryMonth=&CDDate1=&CDDate2=&PeriodType=2&Periodicity=1&Template=tame_intraday_getQuote_closing_redgreen.jsp'
+                url: '/apiData?CDSymbol='+$scope.stock.symbol+'&Segment=CM&Series=EQ&CDExpiryMonth=&FOExpiryMonth=&IRFExpiryMonth=&CDDate1=&CDDate2=&PeriodType=2&Periodicity=1&Template=tame_intraday_getQuote_closing_redgreen.jsp'
             }).then(function(response) {
                 console.log(response);
                 var temp = null;
@@ -331,10 +331,10 @@ angular.module('stockApp')
     		method: 'get',
             cache: true,
             // url: 'https://www.nseindia.com/live_market/dynaContent/live_watch/get_quote/getHistoricalData.jsp?symbol='+symbol+'&series=EQ&fromDate='+fromDate+'&toDate='+toDate
-            url: 'http://localhost:4000/getStockData?symbol='+symbol+'&series=EQ&fromDate='+fromDate+'&toDate='+toDate
+            url: '/getStockData?symbol='+symbol+'&series=EQ&fromDate='+fromDate+'&toDate='+toDate
         
             // // url: 'https://www.nseindia.com/charts/webtame/tame_intraday_getQuote_closing_redgreen.jsp?CDSymbol='+$scope.stock.symbol+'&Segment=CM&Series=EQ&CDExpiryMonth=&FOExpiryMonth=&IRFExpiryMonth=&CDDate1=&CDDate2=&PeriodType=2&Periodicity=1&Template=tame_intraday_getQuote_closing_redgreen.jsp'
-            // url: 'http://localhost:4000/apiData?CDSymbol='+$scope.stock.symbol+'&Segment=CM&Series=EQ&CDExpiryMonth=&FOExpiryMonth=&IRFExpiryMonth=&CDDate1=&CDDate2=&PeriodType=2&Periodicity=1&Template=tame_intraday_getQuote_closing_redgreen.jsp'
+            // url: '/apiData?CDSymbol='+$scope.stock.symbol+'&Segment=CM&Series=EQ&CDExpiryMonth=&FOExpiryMonth=&IRFExpiryMonth=&CDDate1=&CDDate2=&PeriodType=2&Periodicity=1&Template=tame_intraday_getQuote_closing_redgreen.jsp'
             
         }).then(function(response) {
             var day = $(response.data);
@@ -367,7 +367,7 @@ angular.module('stockApp')
             $http({
                 method: 'get',
                 // url: 'https://www1.nseindia.com/live_market/dynaContent/live_watch/get_quote/GetQuote.jsp?symbol='+symbol+'&illiquid=0&smeFlag=0&itpFlag=0'
-                url: 'http://localhost:4000/getStockDataNSE?symbol='+symbol+'&illiquid=0&smeFlag=0&itpFlag=0'
+                url: '/getStockDataNSE?symbol='+symbol+'&illiquid=0&smeFlag=0&itpFlag=0'
             }).then(function(response) {
                 var stockDetailsJSON = null;
                 var jqObject = null;
